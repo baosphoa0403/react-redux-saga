@@ -1,21 +1,28 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   decrement,
-  increment,
   incrementByAmount,
   incrementAsync,
   incrementIfOdd,
   selectCount,
+  selectListPost,
+  fetchCountSaga,
 } from './counterSlice';
 import styles from './Counter.module.css';
-
+import { fetchCount } from './counterAPI';
+// import * as action from "../counter/"
 export function Counter() {
   const count = useSelector(selectCount);
+  const listPost = useSelector(selectListPost);
   const dispatch = useDispatch();
   const [incrementAmount, setIncrementAmount] = useState('2');
 
   const incrementValue = Number(incrementAmount) || 0;
+  console.log(fetchCountSaga.type);
+  useEffect(() => {
+    dispatch({ type: "FETCH_POST" })
+  }, [dispatch])
 
   return (
     <div>
@@ -31,7 +38,7 @@ export function Counter() {
         <button
           className={styles.button}
           aria-label="Increment value"
-          onClick={() => dispatch(increment())}
+          onClick={() => dispatch({ type: 'counter/increment', payload: 3 })}
         >
           +
         </button>
@@ -51,7 +58,9 @@ export function Counter() {
         </button>
         <button
           className={styles.asyncButton}
-          onClick={() => dispatch(incrementAsync(incrementValue))}
+          // onClick={() => dispatch(incrementAsync(incrementValue))}
+          // onClick={() => { dispatch(fetchCountSaga(incrementAmount)) }}
+          onClick={() => { dispatch({ type: fetchCountSaga.type, payload: incrementAmount }) }}
         >
           Add Async
         </button>
@@ -61,6 +70,21 @@ export function Counter() {
         >
           Add If Odd
         </button>
+
+        <button
+          className={styles.button}
+          onClick={() => dispatch({ type: 'INCREMENT_ASYNC' })}
+        >
+          Test Saga
+        </button>
+
+      </div>
+      <div className={styles.row}>
+        <ul>
+          {listPost.map((item) => {
+            return <li>{item.title}</li>
+          })}
+        </ul>
       </div>
     </div>
   );
